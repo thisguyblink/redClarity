@@ -1,4 +1,5 @@
 <script>
+    import logo from "$lib/assets/logo-transparent.png";
     import { writable } from 'svelte/store';
 	let files = $state();
     let dialog;
@@ -32,10 +33,29 @@
 
 </script>
 
-<label for="lab">Upload lab results:</label>
+<link href='https://fonts.googleapis.com/css?family=Fredoka' rel='stylesheet'>
+<link href='https://fonts.googleapis.com/css?family=Reddit+Sans' rel='stylesheet'>
+
+<div class="heading">
+    <h1>RedClarity</h1>
+    <img class="logo" alt="logo" src={logo} />
+</div>
+
+<h2>What is RedClarity?</h2>
+<p>Ever gotten your blood test results and had no idea what they meant? 
+    RedClarity is a website that scans your blood test results and summarizes 
+    them into simpler terms.
+</p>
+
+<h2>How does it work?</h2>
+<p>Just upload a PDF of your blood test results, and RedClarity will scan 
+    through to convert the results into simpler terms.
+</p>
+
+<label for="lab" class="upload">Upload Lab Results:</label>
 <input accept="application/pdf" bind:files id="lab" name="lab" type="file" />
 
-<button onclick={showPop}> Submit Lab </button>
+<button class="submit" onclick={showPop}> Submit Lab </button>
 
 <div class = "results">
     <dialog id="dresult" bind:this={dialog}>
@@ -54,5 +74,60 @@
     </dialog>
 </div>
 
+<style>
+    :global(body){
+        background: #D7ECFF;
+    }
 
+    h1 {
+        font-family: 'Fredoka';
+        font-size: 60px;
+        text-align: right;
+    }
 
+    h2 {
+        font-family: 'Fredoka';
+        font-size: 30px;
+        padding-left: 80px;
+        padding-right: 80px;
+    }
+
+    p {
+        font-family: 'Reddit Sans';
+        font-size: 18px;
+        padding-left: 80px;
+        padding-right: 80px;
+    }
+
+    .upload {
+        font-family: 'Fredoka';
+        font-size: 20px;
+        padding-left: 80px;
+    }
+
+    .submit {
+        background-color: white;
+        font-family: 'Fredoka';
+        font-size: 20px;
+        border-radius: 10px;
+        padding: 5px;
+    }
+
+    .submit:hover {
+        background-color: #C23B22;
+        color: white;
+    }
+
+    .logo {
+        width: 180px;
+        height: 180px;
+        float: left;
+        margin: -30px;
+    }
+
+    .heading {
+        display: grid;
+        align-items: center; 
+        grid-template-columns: 1fr .6fr;
+    }
+</style>
