@@ -1,7 +1,8 @@
 <script>
     import logo from "$lib/assets/logo-transparent.png";
     import { writable } from 'svelte/store';
-    
+    import { get } from 'svelte/store'
+
 	let files = $state();
     let dialog;
     let name = $state("");

@@ -1,14 +1,18 @@
 <script>
     import logo from "$lib/assets/logo-transparent.png";
-    import { writable } from 'svelte/store';
-    import { persisted } from 'svelte-persisted-store'
+    import { get, writable } from 'svelte/store';
+    import { persisted } from 'svelte-persisted-store';
+
     export const analysis = persisted('analysis', {
         summary: 'The summary goes here. ',
         questions: 'Questions go here???'
     });
+
 	let files = $state();
+    const doc = new FormData();
     let dialog;
     let name = $state("");
+    let route = "https://redclarity-398008200067.us-west2.run.app/gemini";
 
 	$effect(() => {
 		if (files) {
@@ -17,7 +21,8 @@
 			console.log(files);
 
             if (name === "" && files.length > 0 && files[0]) {
-                name = files[0].name;  // Update the name store with the file's name
+                name = files[0].name; 
+                doc.append('file', files[0]);
             }
 
 			for (const file of files) {
@@ -26,8 +31,20 @@
 		}
 	});
 
-    function sendDoc() {
+    async function sendDoc() {
         console.log("sent Doc");
+        if (files && files.length > 0) {
+            doc.append('file', files[0]);
+        }
+        const response = await fetch(route, { 
+            method: 'POST',
+            body: doc
+        })
+        const data = await response.json();
+        analysis.set({
+            summary: data.summary || "No summary available.",
+            questions: data.questions || "No questions at this time."
+        });
     }
     function showPop() {
         dialog.showModal();
@@ -62,7 +79,11 @@
 
 <button class="submit-button" onclick={showPop}> Submit Lab </button>
 <a href="/results" class="resultPage">Results Page</a> 
-
+<div class="out">
+    <p>Output Goes Here: </p>
+    <p>{$analysis.summary}</p>
+    <p>{$analysis.questions}</p>
+</div>
 <div class = "results">
     <dialog id="dresult" bind:this={dialog}>
         <button type="button" id="exit" onclick={() => {
@@ -79,6 +100,8 @@
         </div>
     </dialog>
 </div>
+
+
 
 <style>
     :global(body){
