@@ -4,69 +4,123 @@
     import { get } from 'svelte/store'
     import { analysis } from '$lib/store.js';
     import { onMount } from 'svelte';
+    import { marked } from 'marked';
 
     let storedData = $analysis;
+    let resultsHtml = "";
+    let questionsHtml = "";
     console.log("data", storedData);
 
-    onMount(() => {
-        console.log("Analysis on results page:", storedData);
-        storedData = { ...$analysis }; // Forces reactivity update
-    });
-
+    let lang = 0;
+    let sumViet = $state("");
     let sumSpan = $state("");
-	let files = $state();
+    let quesSpan = $state("");
+    let quesViet = $state("");
+    let files = $state();
     let dialog;
     let name = $state("");
     let output = $state($analysis.summary);
-    let data;
+    let isShowingSummary = $state(true);
+    let sum, ques;
+    
     const doc = new FormData();
     let route = "https://redclarity-398008200067.us-west2.run.app/gemini";
     let routeSpan = "https://redclarity-398008200067.us-west2.run.app/spanish";
-    let questions = $state("Waiting for response...");
-    let summary = $state("Waiting for response...");
-    let lang = $state("0");
-    let quesSpan = "";
-
-	$effect(() => {
-		if (files) {
-			// Note that `files` is of type `FileList`, not an Array:
-			// https://developer.mozilla.org/en-US/docs/Web/API/FileList
-			console.log(files);
-
-            if (name === "" && files.length > 0 && files[0]) {
-                name = files[0].name;  // Update the name store with the file's name
-            }
-
-			for (const file of files) {
-				console.log(`${file.name}: ${file.size} bytes`);
-			}
-		}
-	});
+    let routeViet = "https://redclarity-398008200067.us-west2.run.app/vietnamese";
+    
+    onMount(() => {
+        console.log("Analysis on results page:", storedData);
+        storedData = { ...$analysis };
+        resultsClicked();
+    });
 
     $effect(() => {
-        if (lang === "0") {
-            output = $analysis.summary;  // English summary
-        } else if (lang === "1") {
-            toSpan();
-            output = sumSpan || "Spanish summary not available.";  // Spanish summary
-        } else if (lang === "2") {
-            output = quesSpan || "Vietnamese summary not available.";  // Vietnamese summary
+        if (files) {
+            console.log(files);
+
+            if (name === "" && files.length > 0 && files[0]) {
+                name = files[0].name;
+            }
+
+            for (const file of files) {
+                console.log(`${file.name}: ${file.size} bytes`);
+            }
         }
     });
 
-    async function toSpan() {
-        let input = $analysis.questions;
+    $effect(async () => {
+        await updateOutput();
+    });
+
+    async function updateOutput() {
+    console.log("Updating output with language:", lang);
+    
+    if (isShowingSummary) {
+        // Separate check to see if the summaries are showing or not
+        if (lang === 0) {
+            output = $analysis.summary;
+        } else if (lang === 1) {
+            if (!sumSpan) await toSpan(true);
+            output = sumSpan || "Spanish summary not available.";
+        } else if (lang === 2) {
+            if (!sumViet) await toViet(true);
+            output = sumViet || "Vietnamese summary not available.";
+        }
+    } else {
+        // View for the questions side of things
+        if (lang === 0) {
+            output = $analysis.questions;
+        } else if (lang === 1) {
+            if (!quesSpan) await toSpan(false);
+            output = quesSpan || "Spanish questions not available.";
+        } else if (lang === 2) {
+            if (!quesViet) await toViet(false);
+            output = quesViet || "Vietnamese questions not available.";
+        }
+    }
+}
+
+
+    async function toSpan(isSummary) {
+        let input = isSummary ? $analysis.summary : $analysis.questions;
         console.log(input);
         const response = await fetch(routeSpan, { 
             method: 'POST',
             headers: {
-                 'Content-Type': 'application/json'  // Ensure the content type is application/json
+                 'Content-Type': 'application/json'
              },
             body: JSON.stringify({ text: input })
-        })
+        });
         const out = await response.json();
-        sumSpan = out['translated_text'];
-        console.log(sumSpan);
+        
+        if (isSummary) {
+            sumSpan = out['translated_text'];
+            console.log("Spanish Summary:", sumSpan);
+        } else {
+            quesSpan = out['translated_text'];
+            console.log("Spanish Questions:", quesSpan);
+        }
+    }
+
+    async function toViet(isSummary) {
+        let input = isSummary ? $analysis.summary : $analysis.questions;
+        console.log(input);
+        const response = await fetch(routeViet, { 
+            method: 'POST',
+            headers: {
+                 'Content-Type': 'application/json'
+             },
+            body: JSON.stringify({ text: input })
+        });
+        const out = await response.json();
+        
+        if (isSummary) {
+            sumViet = out['translated_text'];
+            console.log("Vietnamese Summary:", sumViet);
+        } else {
+            quesViet = out['translated_text'];
+            console.log("Vietnamese Questions:", quesViet);
+        }
     }
 
     async function sendDoc() {
@@ -77,8 +131,8 @@
         const response = await fetch(route, { 
             method: 'POST',
             body: doc
-        })
-        data = await response.json();
+        });
+        const data = await response.json();
         sum = data["payload"];
         ques = data["questions"];
         console.log(data);
@@ -86,10 +140,20 @@
             summary: sum || "No summary available.",
             questions: ques || "No questions at this time."
         });
+        
+        // Clear translations when uploading a new document
+        sumSpan = "";
+        quesSpan = "";
+        sumViet = "";
+        quesViet = "";
+        
+        await updateOutput();
     }
+    
     function showPop() {
         dialog.showModal();
     }
+    
     function closePop() {
         dialog.close();
     }
@@ -98,21 +162,22 @@
     let qb;
     
     function resultsClicked() {
+        isShowingSummary = true;
         rb.style.backgroundColor = "#C23B22";
         rb.style.color = "white";
         qb.style.backgroundColor = "white";
         qb.style.color = "black";
-        output = $analysis.summary;
+        updateOutput();
     }
 
     function questionsClicked() {
+        isShowingSummary = false;
         rb.style.backgroundColor = "white";
         rb.style.color = "black";
         qb.style.backgroundColor = "#C23B22";
         qb.style.color = "white";
-        output = $analysis.questions;
+        updateOutput();
     }
-
 </script>
 
 <link href='https://fonts.googleapis.com/css?family=Fredoka' rel='stylesheet'>
@@ -129,15 +194,10 @@
 
 <div class="dropdown">
     <select class="drop-button" id="Translate" bind:value={lang}>
-        <option value="0">English</option> 
-        <option value="1">Spanish</option> 
-        <option value="2">Vietnamese</option> 
-    </select> 
-    <!-- <div class="dropdown-content">
-        <button bind:this={eb} onclick={englishClicked} class="english-button">English</button>
-        <button bind:this={sp} onclick={spanishClicked} class="spanish-button">Spanish</button>
-        <button bind:this={vb} onclick={vietnameseClicked} class="vietnamese-button">Vietnamese</button>
-    </div> -->
+        <option value={0}>English</option> 
+        <option value={1}>Spanish</option> 
+        <option value={2}>Vietnamese</option> 
+    </select>
 </div>
 
 <div class="main-text">
