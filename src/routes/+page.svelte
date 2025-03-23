@@ -83,9 +83,6 @@
 
 <button class="submit-button" onclick={showPop}> Submit Lab </button>
 <a href="/results" class="resultPage">Results Page</a> 
-<div class="out">
-    <p> Summary here: {$analysis.summary}</p>
-</div>
 <div class = "results">
     <dialog id="dresult" bind:this={dialog}>
         <button type="button" id="exit" onclick={() => {

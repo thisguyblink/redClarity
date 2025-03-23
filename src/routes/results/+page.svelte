@@ -2,6 +2,16 @@
     import logo from "$lib/assets/logo-transparent.png";
     import { writable } from 'svelte/store';
     import { get } from 'svelte/store'
+    import { analysis } from '$lib/store.js';
+
+    import { onMount } from 'svelte';
+
+    let storedData = $analysis;
+
+    onMount(() => {
+        console.log("Analysis on results page:", storedData);
+        storedData = { ...$analysis }; // Forces reactivity update
+    });
 
 	let files = $state();
     let dialog;
@@ -74,22 +84,14 @@
 </div>
 
 <div class="main-text">
-    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt 
-        ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation 
-        ullamco laboris nisi ut aliquip ex ea commodo consequat.
-    </p>
-    <p>
-        Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat 
-        nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia 
-        deserunt mollit anim id est laborum.
-    </p>
+    <p>{$analysis.summary}</p>
 </div>
 
 <label for="lab" class="upload">Upload More Lab Results:</label>
 <input accept="application/pdf" bind:files id="lab" name="lab" type="file" />
 
 <button class="submit-button" onclick={showPop}> Submit Lab </button>
-
+<a href="../" class="homePage">Home Page</a> 
 <div class = "results">
     <dialog id="dresult" bind:this={dialog}>
         <button type="button" id="exit" onclick={() => {
@@ -107,7 +109,7 @@
     </dialog>
 </div>
 
-<a href="../">Home Page</a> 
+
 
 <style>
     :global(body){
@@ -243,6 +245,24 @@
 
     .dropdown-content-individual {
         padding: 10px;
+    }
+
+    .homePage {
+        text-decoration: none;
+        color: black;
+        background-color: white;
+        font-family: 'Fredoka';
+        font-size: 20px;
+        border-radius: 10px;
+        border: .1em solid black;
+        padding: 5px;
+        cursor: pointer;
+        margin-left: 20px;
+    }
+
+    .homePage:hover {
+        background-color: #C23B22;
+        color: white;
     }
     
 </style>
