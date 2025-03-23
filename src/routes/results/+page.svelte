@@ -16,6 +16,10 @@
 	let files = $state();
     let dialog;
     let name = $state("");
+    let output = $state($analysis.summary);
+    let data = $state("Waiting for response...");
+    const doc = new FormData();
+    let route = "https://redclarity-398008200067.us-west2.run.app/gemini";
 
 	$effect(() => {
 		if (files) {
@@ -33,8 +37,22 @@
 		}
 	});
 
-    function sendDoc() {
+    async function sendDoc() {
         console.log("sent Doc");
+        if (files && files.length > 0) {
+            doc.append('file', files[0]);
+        }
+        const response = await fetch(route, { 
+            method: 'POST',
+            body: doc
+        })
+        data = await response.json();
+        data = data["payload"];
+        console.log(data);
+        analysis.set({
+            summary: data || "No summary available.",
+            questions: data.questions || "No questions at this time."
+        });
     }
     function showPop() {
         dialog.showModal();
@@ -51,6 +69,7 @@
         rb.style.color = "white";
         qb.style.backgroundColor = "white";
         qb.style.color = "black";
+        output = $analysis.summary;
     }
 
     function questionsClicked() {
@@ -58,6 +77,7 @@
         rb.style.color = "black";
         qb.style.backgroundColor = "#C23B22";
         qb.style.color = "white";
+        output = $analysis.questions;
     }
 
 </script>
@@ -70,7 +90,7 @@
     <img class="logo" alt="logo" src={logo} />
 </div>
 
-<button bind:this={rb} onclick={resultsClicked} class="results-button">Results</button>
+<button bind:this={rb} onclick={resultsClicked} class="results-button">Summary</button>
 
 <button bind:this={qb} onclick={questionsClicked} class="questions-button">Questions</button>
 
@@ -84,7 +104,7 @@
 </div>
 
 <div class="main-text">
-    <p>{$analysis.summary}</p>
+    <md>{output}</md>
 </div>
 
 <label for="lab" class="upload">Upload More Lab Results:</label>

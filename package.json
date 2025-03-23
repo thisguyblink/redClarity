@@ -27,6 +27,7 @@
 		"vite": "^6.0.0"
 	},
 	"dependencies": {
+		"marked": "^15.0.7",
 		"svelte-persisted-store": "^0.12.0"
 	}
 }
