@@ -3,10 +3,10 @@
     import { writable } from 'svelte/store';
     import { get } from 'svelte/store'
     import { analysis } from '$lib/store.js';
-
     import { onMount } from 'svelte';
 
     let storedData = $analysis;
+    console.log("data", storedData);
 
     onMount(() => {
         console.log("Analysis on results page:", storedData);
@@ -17,9 +17,11 @@
     let dialog;
     let name = $state("");
     let output = $state($analysis.summary);
-    let data = $state("Waiting for response...");
+    let data;
     const doc = new FormData();
     let route = "https://redclarity-398008200067.us-west2.run.app/gemini";
+    let questions = $state("Waiting for response...");
+    let summary = $state("Waiting for response...");
 
 	$effect(() => {
 		if (files) {
@@ -47,11 +49,12 @@
             body: doc
         })
         data = await response.json();
-        data = data["payload"];
+        sum = data["payload"];
+        ques = data["questions"];
         console.log(data);
         analysis.set({
-            summary: data || "No summary available.",
-            questions: data.questions || "No questions at this time."
+            summary: sum || "No summary available.",
+            questions: ques || "No questions at this time."
         });
     }
     function showPop() {

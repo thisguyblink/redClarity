@@ -11,7 +11,9 @@
 	let files = $state();
     const doc = new FormData();
     let dialog;
-    let data = $state("Waiting for response...");
+    let data;
+    let ques = $state("Waiting for response...");
+    let sum = $state("Waiting for response...");
     let name = $state("");
     let route = "https://redclarity-398008200067.us-west2.run.app/gemini";
 
@@ -42,12 +44,16 @@
             body: doc
         })
         data = await response.json();
-        data = data["payload"];
-        console.log(data);
+        sum = data[0]["payload"];
+        ques = data["questions"];
+        console.log(data[0]["payload"]);
+        console.log(data[1]["questions"]);
         analysis.set({
-            summary: data || "No summary available.",
-            questions: data.questions || "No questions at this time."
+            summary: data[0]["payload"] || "No summary available.",
+            questions: data[1]["questions"]|| "No questions at this time."
         });
+
+        console.log(get(analysis));
     }
     function showPop() {
         dialog.showModal();
