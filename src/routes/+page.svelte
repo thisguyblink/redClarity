@@ -94,21 +94,21 @@
     h2 {
         font-family: 'Fredoka';
         font-size: 30px;
-        padding-left: 80px;
-        padding-right: 80px;
+        padding-left: 100px;
+        padding-right: 100px;
     }
 
     p {
         font-family: 'Reddit Sans';
-        font-size: 18px;
-        padding-left: 80px;
-        padding-right: 80px;
+        font-size: 20px;
+        padding-left: 100px;
+        padding-right: 100px;
     }
 
     .upload {
         font-family: 'Fredoka';
-        font-size: 20px;
-        padding-left: 80px;
+        font-size: 24px;
+        padding-left: 100px;
     }
 
     .submit-button {
@@ -148,9 +148,11 @@
         border: .1em solid black;
         padding: 5px;
         cursor: pointer;
+        margin-left: 20px;
     }
+
     .resultPage:hover {
-        background-color: green;
+        background-color: #C23B22;
         color: white;
     }
 </style>

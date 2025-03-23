@@ -121,15 +121,15 @@
 
     p {
         font-family: 'Reddit Sans';
-        font-size: 18px;
-        padding-left: 80px;
-        padding-right: 80px;
+        font-size: 20px;
+        padding-left: 100px;
+        padding-right: 100px;
     }
 
     .upload {
         font-family: 'Fredoka';
         font-size: 20px;
-        padding-left: 80px;
+        padding-left: 100px;
     }
 
     .submit-button {
@@ -166,7 +166,7 @@
         font-size: 20px;
         border-radius: 10px;
         padding: 5px;
-        margin-left: 80px;
+        margin-left: 100px;
         cursor: pointer;
     }
 
@@ -198,10 +198,10 @@
         border-color: black;
         border-width: 3px;
         border-radius: 10px;
-        margin: 20px 80px 20px 80px;
+        margin: 20px 100px 20px 100px;
         padding: 20px 0px 20px 0px;
     }
-
+    
     .dropdown {
         position: relative;
         float: right;
@@ -214,7 +214,7 @@
         border-style: solid;
         border-radius: 10px;
         padding: 5px;
-        margin-right: 80px;
+        margin-right: 100px;
         cursor: pointer;
     }
 
