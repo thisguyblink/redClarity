@@ -13,6 +13,7 @@
         storedData = { ...$analysis }; // Forces reactivity update
     });
 
+    let sumSpan = $state("");
 	let files = $state();
     let dialog;
     let name = $state("");
@@ -20,8 +21,11 @@
     let data;
     const doc = new FormData();
     let route = "https://redclarity-398008200067.us-west2.run.app/gemini";
+    let routeSpan = "https://redclarity-398008200067.us-west2.run.app/spanish";
     let questions = $state("Waiting for response...");
     let summary = $state("Waiting for response...");
+    let lang = $state("0");
+    let quesSpan = "";
 
 	$effect(() => {
 		if (files) {
@@ -38,6 +42,32 @@
 			}
 		}
 	});
+
+    $effect(() => {
+        if (lang === "0") {
+            output = $analysis.summary;  // English summary
+        } else if (lang === "1") {
+            toSpan();
+            output = sumSpan || "Spanish summary not available.";  // Spanish summary
+        } else if (lang === "2") {
+            output = quesSpan || "Vietnamese summary not available.";  // Vietnamese summary
+        }
+    });
+
+    async function toSpan() {
+        let input = $analysis.questions;
+        console.log(input);
+        const response = await fetch(routeSpan, { 
+            method: 'POST',
+            headers: {
+                 'Content-Type': 'application/json'  // Ensure the content type is application/json
+             },
+            body: JSON.stringify({ text: input })
+        })
+        const out = await response.json();
+        sumSpan = out['translated_text'];
+        console.log(sumSpan);
+    }
 
     async function sendDoc() {
         console.log("sent Doc");
@@ -98,7 +128,7 @@
 <button bind:this={qb} onclick={questionsClicked} class="questions-button">Questions</button>
 
 <div class="dropdown">
-    <select class="drop-button" id="Translate">
+    <select class="drop-button" id="Translate" bind:value={lang}>
         <option value="0">English</option> 
         <option value="1">Spanish</option> 
         <option value="2">Vietnamese</option> 
