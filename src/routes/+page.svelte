@@ -55,7 +55,7 @@
 <label for="lab" class="upload">Upload Lab Results:</label>
 <input accept="application/pdf" bind:files id="lab" name="lab" type="file" />
 
-<button class="submit" onclick={showPop}> Submit Lab </button>
+<button class="submit-button" onclick={showPop}> Submit Lab </button>
 
 <div class = "results">
     <dialog id="dresult" bind:this={dialog}>
@@ -73,6 +73,8 @@
         </div>
     </dialog>
 </div>
+
+<a href="/results">Results Page</a> 
 
 <style>
     :global(body){
@@ -105,15 +107,16 @@
         padding-left: 80px;
     }
 
-    .submit {
+    .submit-button {
         background-color: white;
         font-family: 'Fredoka';
         font-size: 20px;
         border-radius: 10px;
         padding: 5px;
+        cursor: pointer;
     }
 
-    .submit:hover {
+    .submit-button:hover {
         background-color: #C23B22;
         color: white;
     }
