@@ -1,6 +1,11 @@
 <script>
     import logo from "$lib/assets/logo-transparent.png";
     import { writable } from 'svelte/store';
+    import { persisted } from 'svelte-persisted-store'
+    export const analysis = persisted('analysis', {
+        summary: 'The summary goes here. ',
+        questions: 'Questions go here???'
+    });
 	let files = $state();
     let dialog;
     let name = $state("");
@@ -56,6 +61,7 @@
 <input accept="application/pdf" bind:files id="lab" name="lab" type="file" />
 
 <button class="submit-button" onclick={showPop}> Submit Lab </button>
+<a href="/results" class="resultPage">Results Page</a> 
 
 <div class = "results">
     <dialog id="dresult" bind:this={dialog}>
@@ -73,8 +79,6 @@
         </div>
     </dialog>
 </div>
-
-<a href="/results">Results Page</a> 
 
 <style>
     :global(body){
@@ -132,5 +136,21 @@
         display: grid;
         align-items: center; 
         grid-template-columns: 1fr .6fr;
+    }
+
+    .resultPage {
+        text-decoration: none;
+        color: black;
+        background-color: white;
+        font-family: 'Fredoka';
+        font-size: 20px;
+        border-radius: 10px;
+        border: .1em solid black;
+        padding: 5px;
+        cursor: pointer;
+    }
+    .resultPage:hover {
+        background-color: green;
+        color: white;
     }
 </style>
