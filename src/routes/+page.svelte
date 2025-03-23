@@ -11,6 +11,7 @@
 	let files = $state();
     const doc = new FormData();
     let dialog;
+    let data = $state("Waiting for response...");
     let name = $state("");
     let route = "https://redclarity-398008200067.us-west2.run.app/gemini";
 
@@ -40,9 +41,11 @@
             method: 'POST',
             body: doc
         })
-        const data = await response.json();
+        data = await response.json();
+        data = data["payload"];
+        console.log(data);
         analysis.set({
-            summary: data.summary || "No summary available.",
+            summary: data || "No summary available.",
             questions: data.questions || "No questions at this time."
         });
     }
@@ -74,15 +77,14 @@
     through to convert the results into simpler terms.
 </p>
 
+
 <label for="lab" class="upload">Upload Lab Results:</label>
 <input accept="application/pdf" bind:files id="lab" name="lab" type="file" />
 
 <button class="submit-button" onclick={showPop}> Submit Lab </button>
 <a href="/results" class="resultPage">Results Page</a> 
 <div class="out">
-    <p>Output Goes Here: </p>
-    <p>{$analysis.summary}</p>
-    <p>{$analysis.questions}</p>
+    <p> Summary here: {$analysis.summary}</p>
 </div>
 <div class = "results">
     <dialog id="dresult" bind:this={dialog}>
