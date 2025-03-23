@@ -95,16 +95,20 @@
 <button bind:this={qb} onclick={questionsClicked} class="questions-button">Questions</button>
 
 <div class="dropdown">
-    <button class="drop-button">Dropdown</button>
-    <div class="dropdown-content">
-        <div class="dropdown-content-individual">English</div>
-        <div class="dropdown-content-individual">Spanish</div>
-        <div class="dropdown-content-individual">Vietnamese</div>
-    </div>
+    <select class="drop-button" id="Translate">
+        <option value="0">English</option> 
+        <option value="1">Spanish</option> 
+        <option value="2">Vietnamese</option> 
+    </select> 
+    <!-- <div class="dropdown-content">
+        <button bind:this={eb} onclick={englishClicked} class="english-button">English</button>
+        <button bind:this={sp} onclick={spanishClicked} class="spanish-button">Spanish</button>
+        <button bind:this={vb} onclick={vietnameseClicked} class="vietnamese-button">Vietnamese</button>
+    </div> -->
 </div>
 
 <div class="main-text">
-    <md>{output}</md>
+    <p>{output}</p>
 </div>
 
 <label for="lab" class="upload">Upload More Lab Results:</label>
@@ -151,7 +155,7 @@
 
     .upload {
         font-family: 'Fredoka';
-        font-size: 20px;
+        font-size: 24px;
         padding-left: 100px;
     }
 
@@ -245,26 +249,9 @@
         background-color: #C23B22 !important;
         color: white !important;
     }
-
-    .dropdown-content {
-        display: none;
-        position: absolute;
-        left: 0;
-        background-color: white;
-        width: 150px;
-        padding: 5px;
-        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-        z-index: 1;
-        font-family: 'Fredoka';
-        font-size: 20px;
-    }
     
-    .dropdown:hover .dropdown-content {
+    .dropdown:hover {
         display: block;
-    }
-
-    .dropdown-content-individual {
-        padding: 10px;
     }
 
     .homePage {
